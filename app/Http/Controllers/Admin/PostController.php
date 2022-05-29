@@ -5,17 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Post;
 use App\Category;
-use App\User;
 use App\Tag;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class PostController extends Controller
 {
-    public $validators = [
-        'title'     => 'required|max:100',
-        'content'   => 'required'
-    ];
+    // public $validators = [
+    //     'title'     => 'required|max:100',
+    //     'content'   => 'required'
+    // ];
 
     private function getValidators($model) {
         return [
@@ -26,8 +27,9 @@ class PostController extends Controller
                 Rule::unique('posts')->ignore($model),
                 'max:100'
             ],
-            'category_id' => 'required|exists:categories,id',
-            'content'   => 'required'
+            'category_id' => 'required|',
+            'content'   => 'required',
+            'tags'      => 'exists:App\Tag,id'
         ];
     }
     /**
@@ -104,7 +106,12 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $request->validate($this->getValidators(null));
-        Post::create($request->all());
+
+        $formData = $request->all() + ['user_id' => Auth::user()->id];
+
+        $post = Post::create($formData);
+        $post->tags()->attach($formData['tags']);
+
         return redirect()->route('admin.posts.show', $posts->slug);
     }
 
@@ -127,7 +134,15 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        return view('admin.posts.edit', compact('post'));
+        // if (Auth::user()->id !== $post->user_id) abort(403);
+        $categories = Category::all();
+        $tags = Tag::all();
+
+        return view('admin.posts.edit', [
+            'post'          => $post,
+            'categories'    => $categories,
+            'tags'          => $tags
+        ]);
     }
 
     /**
@@ -139,8 +154,12 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
+        // if (Auth::user()->id !== $post->user_id) abort(403);
+
         $request->validate($this->getValidators($post));
-        $post->update($request->all());
+        $formData = $request->all();
+        $post->update($formData);
+        $post->tags()->sync($formData['tags']);
 
         return redirect()->route('admin.posts.show', $post->slug);
     }
@@ -153,7 +172,10 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        // if (Auth::user()->id !== $post->user_id) abort(403);
+        $post->tags()->detach();
         $post->delete();
+
         return redirect()->route('admin.posts.index');
     }
 }

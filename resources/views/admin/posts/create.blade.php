@@ -37,9 +37,14 @@
             <fieldset>
                 <legend>tags</legend>
                 @foreach ($tags as $tag)
-                    <input type="checkbox" name="tag[]" id="tag-{{ $tag->id }}" value="{{ $tag->id }}">
+                    <input type="checkbox" name="tag[]" id="tag-{{ $tag->id }}" value="{{ $tag->id }}"
+                    @if (in_array($tag->id, old('tags',[]))) checked @endif>
                     <label for="tag-{{ $tag->id }}">{{ $tag->name }}</label>
                 @endforeach
+
+                @error('tags[]')
+                    <div class="alert alert-danger">{{ $message }}</div>
+                @enderror
             </fieldset>
 
             <div class="mb-3">

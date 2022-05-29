@@ -34,6 +34,7 @@
                 <th scope="col">Title</th>
                 <th scope="col">Author</th>
                 <th scope="col">Category</th>
+                <th scope="col">Tags</th>
                 <th scope="col">Slug</th>
                 <th scope="col">Created At</th>
                 <th scope="col">Updated At</th>
@@ -45,8 +46,9 @@
                     <tr data-id="{{ $post->slug }}">
                         <th class="text-center" scope="row">{{ $post->id }}</th>
                         <td>{{ $post->title }}</td>
-                        <td>{{ $post->user->id }}</td>
+                        <td>{{ $post->user_id }}</td>
                         <td>{{ $post->category->id }}</td>
+                        <td>{{ $post->tags->pluck('name')->join(', ') }}</td>
                         <td>{{ $post->slug }}</td>
                         <td>{{ date('d/m/Y', strtotime($post->created_at)) }}</td>
                         <td>{{ date('d/m/Y', strtotime($post->updated_at)) }}</td>
