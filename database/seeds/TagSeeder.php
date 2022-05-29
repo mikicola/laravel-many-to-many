@@ -26,7 +26,7 @@ class TagSeeder extends Seeder
         foreach($tags as $tag) {
             Tag::create([
                 'name' => $tag,
-                'slug' => str_slug($tag)
+                'slug' => Str::slug($tag)
             ]);
         }
     }

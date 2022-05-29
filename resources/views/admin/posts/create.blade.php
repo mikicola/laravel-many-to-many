@@ -33,6 +33,15 @@
                 <div class="alert alert-danger">{{ $message }}</div>
             @enderror
 
+            {{-- fieldset tag per raggruppare  --}}
+            <fieldset>
+                <legend>tags</legend>
+                @foreach ($tags as $tag)
+                    <input type="checkbox" name="tag[]" id="tag-{{ $tag->id }}" value="{{ $tag->id }}">
+                    <label for="tag-{{ $tag->id }}">{{ $tag->name }}</label>
+                @endforeach
+            </fieldset>
+
             <div class="mb-3">
                 <label for="content" class="form-label">{{ __('Content') }}</label>
                 <textarea class="form-control" id="content" rows="10" name="content" placeholder="Post Description">{{ old('content') }}</textarea>

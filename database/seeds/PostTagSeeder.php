@@ -17,7 +17,9 @@ class PostTagSeeder extends Seeder
 
         foreach($posts as $post) {
             $postTags = Tag::inRandomOrder()->limit(rand(0, 5))->get();
-            $post->tags()->attach($postTags->toArray());
+
+            // pluck per prendere solo l'id dei tag
+            $post->tags()->attach($postTags->pluck('id')->all());
         }
     }
 }

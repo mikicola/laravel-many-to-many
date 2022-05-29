@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Post;
 use App\Category;
 use App\User;
+use App\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -86,8 +87,12 @@ class PostController extends Controller
      */
     public function create()
     {
-        $categories = \App\Category::all();
-        return view('admin.posts.create', compact('categories'));
+        $categories = Category::all();
+        $tags = Tag::all();
+        return view('admin.posts.create', [
+            'categories' => $categories,
+            'tags' => $tags
+        ]);
     }
 
     /**
